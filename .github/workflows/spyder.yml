@@ -27,10 +27,5 @@ jobs:
     - name: Run API crawler with preset stock codes
       run: python api.py 2330 0050 2317
 
-    - name: Upload both CSV results
-      uses: actions/upload-artifact@2d18b310d58e7cc7dc604ca9b7d084c3c3f5d25f
-      with:
-        name: crawled-data
-        path: |
-          static.csv
-          api.csv
+    - name: Done
+      run: echo "所有任務完成，請至 log 或 repo 下載 csv 結果"
