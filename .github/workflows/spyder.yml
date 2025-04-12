@@ -25,7 +25,7 @@ jobs:
       run: python static.py
 
     - name: Run API crawler with preset stock codes
-      run: python api.py 2330 0050 2317
+      run: python api.py 2330 0050 2317 00940
 
     - name: Done
       run: echo "所有任務完成，請至 log 或 repo 下載 csv 結果"
