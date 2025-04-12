@@ -1,0 +1,36 @@
+name: Run Stock Crawler Daily
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 每天台灣時間下午兩點執行（UTC+8 → UTC 06:00）
+  workflow_dispatch:      # 支援手動觸發
+
+jobs:
+  run-crawlers:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install requests beautifulsoup4
+
+    - name: Run static crawler
+      run: python static.py
+
+    - name: Run API crawler with preset stock codes
+      run: python api.py 2330 0050 2317
+
+    - name: Upload both CSV results
+      uses: actions/upload-artifact@v3
+      with:
+        name: crawled-data
+        path: |
+          static.csv
+          api.csv
