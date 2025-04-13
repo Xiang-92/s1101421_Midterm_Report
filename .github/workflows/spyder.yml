@@ -1,39 +1,37 @@
+
 name: Run Stock Crawler Daily
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # 每天台灣時間下午兩點執行（UTC+8 → UTC 06:00）
-  workflow_dispatch:      # 支援手動觸發
+    - cron: '0 6 * * *'  # 每天台灣時間下午 2 點執行
+  workflow_dispatch:
 
 jobs:
   run-crawlers:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: pip install requests beautifulsoup4
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 twstock lxml
 
-    - name: Run static crawler
-      run: python static.py
+      - name: Run static crawler (台積電、華碩、鴻海)
+        run: python static.py 2330 2357 2317
 
-    - name: Run API crawler with preset stock codes
-      run: python api.py 2330 0050 2317 00940
+      - name: Run API crawler (ETF：00878、00919、00940)
+        run: python api.py 00878 00919 00940
 
-    - name: Done
-      run: echo "所有任務完成，請至 log 或 repo 下載 csv 結果"
-
-    - name: Commit CSV to repo
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "actions@github.com"
-        git add api.csv static.csv
-        git commit -m "Update stock data"
-        git push
+      - name: Commit CSV to repo
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add api.csv static.csv
+          git diff --cached --quiet || git commit -m "Update stock data"
+          git push
